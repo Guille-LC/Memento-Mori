@@ -40,6 +40,7 @@ export default function LifeRemaining() {
       </>
     )}
 
+    {/* Botón para calcular */}
     <button
       onClick={handleCalculate}
       className="w-full mt-4 bg-zinc-100 text-zinc-900 py-2 rounded-xl font-medium hover:bg-zinc-200 transition"
@@ -47,6 +48,27 @@ export default function LifeRemaining() {
       Calcular
     </button>
 
+    {/* Visualización de los años vividos y por vivir */}
+    {edadDelUser !== null && (
+      <div className="grid grid-cols-10 gap-1 mt-6">
+        {Array.from({ length: LIFE_EXPECTANCY }).map((_, index) => {
+          const yearNumber = index + 1
+          const lived = yearNumber < edadDelUser
+          const current = yearNumber === edadDelUser
+          const exceeded = edadDelUser > LIFE_EXPECTANCY
+        
+          let color = 'bg-slate-800' // restantes
+        
+          if (lived) color = 'bg-emerald-500/80'
+          if (current) color = 'bg-amber-400'
+          if (exceeded) color = 'bg-red-500/70'
+        
+          return <div key={index} className={`w-6 h-6 rounded-sm transition hover:scale-110 ${color}`} title={`Año ${yearNumber}`}/>
+        })}
+      </div>
+    )}
+
+    {/* Visualización de los años vividos y por vivir */}
     {result !== null && (
       <>
         <p className="text-zinc-200 font-medium">
@@ -56,13 +78,12 @@ export default function LifeRemaining() {
         </p>
 
         <p className="text-red-400 font-semibold">
-          Te quedan por vivir aproximadamente {result * 365} días.
+          {result > 0 ? `Te quedan por vivir aproximadamente ${result * 365} días. A no kukearla!` : `Has superado la esperanza de vida promedio por ${Math.abs(result) * 365} días.`}
         </p>
       </>
     )}
 
-  </section>
-</div>
-
+      </section>
+    </div>
   )
 }
