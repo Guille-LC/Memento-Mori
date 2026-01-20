@@ -1,87 +1,120 @@
 'use client'
 import { useState } from 'react'
 
-const LIFE_EXPECTANCY = 80
+const YEARS = 80
+const WEEKS_PER_YEAR = 52
 
 export default function LifeRemaining() {
-  const [result, setResult] = useState<number | null>(null)
-  const [edadDelUser, setEdadDelUser] = useState<number | null>(null)
+  /* Nueva funcionalidad */
+  const [birthDate, setBirthDate] = useState<Date | null>(null)
+  const [collapsed, setCollapsed] = useState(true)
+  
 
+  /* Calcula la edad */
   const handleCalculate = () => {
-    const input = prompt('Ingrese su edad')
+    const day = prompt('Día de nacimiento (1-31)')
+    const month = prompt('Mes de nacimiento (1-12)')
+    const year = prompt('Año de nacimiento (ej: 1995)')
 
-    if (!input || isNaN(Number(input)) || Number(input) < 0) {
-      alert('Por favor ingrese una edad válida.')
+    if (!day || !month || !year) {
+      alert('Datos inválidos')
       return
     }
 
-    const edad = Number(input)
-    setEdadDelUser(edad)
-    setResult(LIFE_EXPECTANCY - edad)
+    const birth = new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day)
+    )
+
+    if (isNaN(birth.getTime())) {
+      alert('Fecha inválida')
+      return
+    }
+
+    setBirthDate(birth)
+  }
+
+  let livedDays = 0
+  let livedWeeks = 0
+  const totalWeeks = YEARS * WEEKS_PER_YEAR
+  let remainingWeeks = totalWeeks
+  let percentage = 0
+
+  if (birthDate) {
+    const today = new Date()
+    const diffMs = today.getTime() - birthDate.getTime()
+    livedDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    livedWeeks = Math.floor(livedDays / 7)
+    remainingWeeks = Math.max(totalWeeks - livedWeeks, 0)
+    percentage = Math.min((livedWeeks / totalWeeks) * 100, 100)
   }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center px-4">
-  <section className="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4 text-center">
+      <section className=" w-full max-w-4xl lg:min-w-[900px] bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4 text-center">
 
-    <h2 className="text-sm uppercase tracking-widest text-zinc-400">
-      Memento Mori
-    </h2>
 
-    {edadDelUser !== null && (
-      <>
-        <h1 className="text-3xl font-semibold text-zinc-100">
-          Vos tenés {edadDelUser} años
-        </h1>
+        <h2 className="text-sm uppercase tracking-widest text-zinc-400">
+          Memento Mori
+        </h2>
 
-        <p className="text-zinc-300 leading-relaxed">
-          Has vivido aproximadamente {edadDelUser * 365} días.
-        </p>
-      </>
-    )}
+        <button
+          onClick={handleCalculate}
+          className="text-sm underline text-zinc-300"
+        >
+          Ingresar fecha de nacimiento
+        </button>
 
-    {/* Botón para calcular */}
-    <button
-      onClick={handleCalculate}
-      className="w-full mt-4 bg-zinc-100 text-zinc-900 py-2 rounded-xl font-medium hover:bg-zinc-200 transition"
-    >
-      Calcular
-    </button>
+        {birthDate && (
+  <div className="space-y-2 text-sm text-zinc-300">
+    <p>
+      Viviste <span className="text-emerald-400 font-medium">{livedWeeks}</span> semanas ·
+      Te quedan <span className="text-red-400 font-medium">{remainingWeeks}</span>
+    </p>
 
-    {/* Visualización de los años vividos y por vivir */}
-    {edadDelUser !== null && (
-      <div className="grid grid-cols-10 gap-1 mt-6">
-        {Array.from({ length: LIFE_EXPECTANCY }).map((_, index) => {
-          const yearNumber = index + 1
-          const lived = yearNumber < edadDelUser
-          const current = yearNumber === edadDelUser
-          const exceeded = edadDelUser > LIFE_EXPECTANCY
-        
-          let color = 'bg-slate-800' // restantes
-        
-          if (lived) color = 'bg-emerald-500/80'
-          if (current) color = 'bg-amber-400'
-          if (exceeded) color = 'bg-red-500/70'
-        
-          return <div key={index} className={`w-6 h-6 rounded-sm transition hover:scale-110 ${color}`} title={`Año ${yearNumber}`}/>
-        })}
-      </div>
-    )}
+    <p>
+      Viviste aproximadamente <span className="font-medium">{livedDays}</span> días
+    </p>
 
-    {/* Visualización de los años vividos y por vivir */}
-    {result !== null && (
-      <>
-        <p className="text-zinc-200 font-medium">
-          {result > 0
-            ? `Te quedan aproximadamente ${result} años de vida.`
-            : `Ya superaste la esperanza de vida promedio.`}
-        </p>
+    <p>
+      Eso representa <span className="font-medium">{percentage.toFixed(1)}%</span> de una vida promedio
+    </p>
+  </div>
+)}
 
-        <p className="text-red-400 font-semibold">
-          {result > 0 ? `Te quedan por vivir aproximadamente ${result * 365} días. A no kukearla!` : `Has superado la esperanza de vida promedio por ${Math.abs(result) * 365} días.`}
-        </p>
-      </>
-    )}
+
+        {birthDate && !collapsed && (
+          <div className="mt-6 flex justify-center">
+
+            <div className="grid grid-cols-[repeat(52,1fr)] gap-[2px]">
+              {Array.from({ length: totalWeeks }).map((_, index) => {
+                const lived = index < livedWeeks
+                const current = index === livedWeeks
+
+                let color = 'bg-zinc-800'
+                if (lived) color = 'bg-emerald-500/80'
+                if (current) color = 'bg-amber-400'
+
+                return (
+                  <div
+                    key={index}
+                    className={`w-[6px] h-[6px] sm:w-[8px] sm:h-[8px] rounded-sm ${color}`}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {birthDate && (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="text-xs underline text-zinc-400"
+          >
+            {collapsed ? 'Ver vida completa' : 'Ocultar vida completa'}
+          </button>
+        )}
 
       </section>
     </div>
