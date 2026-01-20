@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 
 const YEARS = 80
 const WEEKS_PER_YEAR = 52
@@ -55,10 +56,11 @@ export default function LifeRemaining() {
       <section className=" w-full max-w-4xl lg:min-w-[900px] bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4 text-center">
 
 
-        <h2 className="text-sm uppercase tracking-widest text-zinc-400">
+        <h2 className="flex items-center gap-2 text-sm uppercase tracking-widest text-zinc-400">
           Memento Mori
+          <Image src="/omega.png" alt="Omega" width={25} height={25} className="opacity-80"/>
         </h2>
-
+        
         <button
           onClick={handleCalculate}
           className="text-sm underline text-zinc-300"
