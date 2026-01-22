@@ -107,16 +107,14 @@ export default function LifeRemaining() {
                 {Array.from({ length: totalWeeks }).map((_, index) => {
                   const lived = index < livedWeeks
                   const current = index === livedWeeks
-
+                  const weekOfYear = index % 52
                   const year = Math.floor(index / 52)
 
                   let color = 'bg-zinc-700/40'
                   if (lived) color = 'bg-zinc-100'
                   if (current) color = 'bg-amber-400'
 
-                  return (
-                    <div key={index} className={`w-[8px] h-[8px] rounded-[1px] ${color} ${year % 10 === 0 ? 'mt-2' : ''}`}/>
-                  )
+                  return <div key={index} className={` w-[8px] h-[8px] rounded-[1px] ${color} ${weekOfYear !== 0 && weekOfYear % 13 === 0 ? 'ml-2' : ''} ${year % 10 === 0 ? 'mt-2' : ''}`}></div>
                 })}
               </div>
             </div>
