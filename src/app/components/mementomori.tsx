@@ -66,9 +66,17 @@ export default function LifeRemaining() {
       <section className=" w-full max-w-[1100px] bg-zinc-900 border border-zinc-800 rounded-xl p-8 shadow-2xl space-y-6">
 
         {userName && (
-          <h2 className="flex items-center gap-2 text-center text-sm tracking-[0.3em] text-zinc-300">
-            {userName.toUpperCase()} <Image src="/omega.png" alt="Omega" width={25} height={25} className="opacity-80"/>
+          <div className="flex flex-col items-center gap-4">
+    
+          {/* Logo Blanco */}
+          <Image src="/logoblanco.svg" alt="Omega" width={180} height={180} className="opacity-90 invert"/>
+              
+          {/* Nombre */}
+          <h2 className="text-xl md:text-2xl font-semibold tracking-[0.4em] text-zinc-100 text-center">
+            {userName.toUpperCase()}
           </h2>
+              
+          </div>
         )}
 
         {/* Botón para ingresar fecha de nacimiento */}
